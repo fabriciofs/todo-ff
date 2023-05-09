@@ -1,10 +1,16 @@
 <template>
-  <q-page class="row items-center justify-evenly">
+  <q-page class="items-center flex column">
+    <h2 class="">TODO-LIST</h2>
+    <div class="row">
+      <q-input outlined v-model="newTodo" @keyup.enter="addTodo" class="q-mr-sm"/>
+      <q-btn color="secondary" @click="addTodo">add</q-btn>
+    </div>
     <example-component
       title="Example component"
       active
       :todos="todos"
       :meta="meta"
+      @update-todo="updateTodo"
     ></example-component>
   </q-page>
 </template>
@@ -12,31 +18,37 @@
 <script setup lang="ts">
 import { Todo, Meta } from 'components/models';
 import ExampleComponent from 'components/ExampleComponent.vue';
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
+import { api } from 'boot/axios'
 
-const todos = ref<Todo[]>([
-  {
-    id: 1,
-    content: 'ct1'
-  },
-  {
-    id: 2,
-    content: 'ct2'
-  },
-  {
-    id: 3,
-    content: 'ct3'
-  },
-  {
-    id: 4,
-    content: 'ct4'
-  },
-  {
-    id: 5,
-    content: 'ct5'
-  }
-]);
+const newTodo = ref('')
+
+const todos = ref<Todo[]>([]);
+
 const meta = ref<Meta>({
-  totalCount: 1200
+  totalCount: 0
 });
+
+const addTodo = async () => {
+  if (!newTodo.value.trim()) return
+  await api.post('/todos', {
+    "description": newTodo.value,
+    "dueDate": new Date().toISOString(),
+    "isDone": false
+  })
+  newTodo.value = ''
+  await updateTodo()
+}
+
+const updateTodo = () => {
+  return api.get('/todos')
+    .then((response) => {
+      todos.value = response.data
+      meta.value.totalCount = response.data.length
+    })
+}
+
+onMounted(() => {
+  updateTodo()
+})
 </script>
