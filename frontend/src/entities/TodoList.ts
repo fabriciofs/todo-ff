@@ -27,6 +27,7 @@ export default class TodoList extends Observable {
     const todo = await this.todoGateway.addItem(item)
     this.items.push(todo)
     this.notify('addTodo', todo)
+    return todo
   }
 
   async getTodo(id: string): Promise<Todo | undefined> {
