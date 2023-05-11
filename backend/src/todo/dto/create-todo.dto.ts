@@ -15,7 +15,7 @@ export class CreateTodoDto {
   @IsNotEmpty()
   @ApiProperty()
   @IsDateString()
-  dueDate: Date;
+  dueDate: string;
 
   @IsNotEmpty()
   @ApiProperty()

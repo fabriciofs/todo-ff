@@ -14,7 +14,7 @@ export class Todo {
 
   @Column({ type: 'date' })
   @ApiProperty()
-  dueDate: Date;
+  dueDate: string;
 
   @Column({ default: false })
   @ApiProperty()
