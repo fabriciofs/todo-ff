@@ -17,7 +17,7 @@
     <q-btn
       class="q-mx-sm"
       v-if="!todo.edit"
-      title="remover item"
+      title="editar item"
       round
       icon="edit"
       color="blue"
@@ -26,7 +26,7 @@
     />
     <q-btn
       v-if="todo.edit"
-      title="remover item"
+      title="salvar item"
       round
       icon="save"
       color="blue"
