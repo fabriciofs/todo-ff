@@ -11,7 +11,7 @@ class TodoHttpGatewayMemory implements TodoGateway {
   }
   async addItem(item: Todo): Promise<Todo> {
     const todo: Todo = {
-      id: "1",
+      id: '1',
       description: item.description,
       dueDate: item.dueDate,
       isDone: false
@@ -42,33 +42,33 @@ describe('TodoList', () => {
 
   it('deve ser criado 1 item', async () => {
     const todoList = new TodoList(new TodoHttpGatewayMemory());
-    await todoList.addTodo("descricao teste", "2021-01-01");
+    await todoList.addTodo('descricao teste', '2021-01-01');
     expect(todoList.items).toHaveLength(1)
     expect(todoList.items[0]).toEqual({
-      id: "1",
-      description: "descricao teste",
-      dueDate: "2021-01-01",
+      id: '1',
+      description: 'descricao teste',
+      dueDate: '2021-01-01',
       isDone: false
     })
   });
 
   it('deve ser alterado 1 item', async () => {
     const todoList = new TodoList(new TodoHttpGatewayMemory());
-    const todo = await todoList.addTodo("descricao teste", "2021-01-01");
-    await todoList.updateTodo({ ...todo!, description: "descricao teste alterada" });
+    const todo = await todoList.addTodo('descricao teste', '2021-01-01');
+    await todoList.updateTodo({ ...todo!, description: 'descricao teste alterada' });
     await todoList.getTodos();
     expect(todoList.items).toHaveLength(1)
     expect(todoList.items[0]).toEqual({
-      id: "1",
-      description: "descricao teste alterada",
-      dueDate: "2021-01-01",
+      id: '1',
+      description: 'descricao teste alterada',
+      dueDate: '2021-01-01',
       isDone: false
     })
   });
 
   it('deve ser removido 1 item', async () => {
     const todoList = new TodoList(new TodoHttpGatewayMemory());
-    const todo = await todoList.addTodo("descricao teste", "2021-01-01");
+    const todo = await todoList.addTodo('descricao teste', '2021-01-01');
     await todoList.removeTodo(todo!);
     await todoList.getTodos();
     expect(todoList.items).toHaveLength(0)
@@ -76,13 +76,13 @@ describe('TodoList', () => {
 
   it('deve retornar uma exceção quando alterar um todo inexistente', async () => {
     const todoList = new TodoList(new TodoHttpGatewayMemory());
-    const todo = await todoList.addTodo("descricao teste", "2021-01-01");
+    const todo = await todoList.addTodo('descricao teste', '2021-01-01');
     await todoList.getTodos();
     expect(todoList.items).toHaveLength(1)
     try {
-      await todoList.updateTodo({ ...todo!, id: "2" });
-    } catch (error: any) {
-      expect(error.message).toEqual('Item not found');
+      await todoList.updateTodo({ ...todo!, id: '2' });
+    } catch (error) {
+      if (error instanceof Error) expect(error.message).toEqual('Item not found');
     }
   });
 });

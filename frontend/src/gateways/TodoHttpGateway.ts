@@ -1,4 +1,4 @@
-import { Todo, TodoSchema, TodosSchema } from 'src/entities/Todo';
+import { Todo, TodosSchema } from 'src/entities/Todo';
 import HttpClient from '../infra/httpClient';
 import TodoGateway from './TodoGateway';
 
