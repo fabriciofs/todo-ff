@@ -76,7 +76,7 @@ describe('TodoList', () => {
     expect(todoList.items).toHaveLength(0)
   });
 
-  it('deve retornar uma exceção quando alterar um todo inexistente', async () => {
+  it('deve retornar uma exceção quando alterar um TODO inexistente', async () => {
     const todoList = new TodoList(new TodoHttpGatewayMemory());
     const todo = await todoList.addTodo("descricao teste", "2021-01-01");
     await todoList.getTodos();

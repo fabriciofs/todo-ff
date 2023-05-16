@@ -1,1 +1,2 @@
-// This file will be run before each test file
+import { installQuasar } from '@quasar/quasar-app-extension-testing-unit-vitest';
+installQuasar();
