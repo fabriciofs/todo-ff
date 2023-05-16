@@ -1,4 +1,4 @@
-import { Todo } from 'src/entities/Todo';
+import { Todo, TodoSchema, TodosSchema } from 'src/entities/Todo';
 import HttpClient from '../infra/httpClient';
 import TodoGateway from './TodoGateway';
 
@@ -8,8 +8,14 @@ export default class TodoHttpGateway implements TodoGateway {
 	}
 
 	async getItems(): Promise<Todo[]> {
-		const todosData: Todo[] = await this.httpClient.get(`${this.baseUrl}/${this.endPoint}`)
-		return todosData;
+		const response = await this.httpClient.get(`${this.baseUrl}/${this.endPoint}`)
+		const paresedTodosData = TodosSchema.safeParse(response)
+		if (paresedTodosData.success) {
+			const todosData: Todo[] = paresedTodosData.data;
+			return todosData;
+		} else {
+			throw new Error(paresedTodosData.error.message)
+		}
 	}
 
 	async addItem(item: Todo): Promise<Todo> {

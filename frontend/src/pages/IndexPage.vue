@@ -7,7 +7,11 @@
         <q-input outlined v-model="data.dueDate" mask="date">
           <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+              <q-popup-proxy
+                cover
+                transition-show="scale"
+                transition-hide="scale"
+              >
                 <q-date v-model="data.dueDate">
                   <div class="row items-center justify-end">
                     <q-btn v-close-popup label="Close" color="primary" flat />
@@ -44,22 +48,50 @@
           </template>
         </q-input>
       </div> -->
-      <q-btn :disabled="!data.dueDate || !data.description" color="secondary" size="sm"
-        @click="data.todoList.addTodo(data.description, new Date(data.dueDate))">Adicionar</q-btn>
+      <q-btn
+        :disabled="!data.dueDate || !data.description"
+        color="secondary"
+        size="sm"
+        @click="data.todoList.addTodo(data.description, data.dueDate)"
+        >Adicionar</q-btn
+      >
     </div>
     <div class="text-h6 q-pt-lg" v-if="data.todoList.items.length === 0">
       Não ha tarefas
     </div>
     <ul v-else style="min-width: 300px">
       <li v-for="todo in data.todoList.items" :key="todo.id">
-        <div v-if="data.todoEdinting !== todo" class="flex items-center justify-between">
-          <span :class="todo.isDone ? 'text-strike' : ''" class="q-mr-sm"> {{ todo.description }} </span>
-          <i :class="todo.isDone ? 'text-strike' : ''"> {{ new Date(todo.dueDate).toLocaleDateString() }} </i>
-          <q-checkbox v-model="todo.isDone" @update:model-value="data.todoList.updateTodo(todo)" />
-          <q-btn title="remover item" round icon="remove" color="red" size="xs"
-            @click="data.todoList.removeTodo(todo)"></q-btn>
-          <q-btn class="q-mx-sm" title="remover item" round icon="edit" color="blue" size="xs"
-            @click="data.todoEdinting = todo"></q-btn>
+        <div
+          v-if="data.todoEdinting !== todo"
+          class="flex items-center justify-between"
+        >
+          <span :class="todo.isDone ? 'text-strike' : ''" class="q-mr-sm">
+            {{ todo.description }}
+          </span>
+          <i :class="todo.isDone ? 'text-strike' : ''">
+            {{ new Date(todo.dueDate).toLocaleDateString() }}
+          </i>
+          <q-checkbox
+            v-model="todo.isDone"
+            @update:model-value="data.todoList.updateTodo(todo)"
+          />
+          <q-btn
+            title="remover item"
+            round
+            icon="remove"
+            color="red"
+            size="xs"
+            @click="data.todoList.removeTodo(todo)"
+          ></q-btn>
+          <q-btn
+            class="q-mx-sm"
+            title="remover item"
+            round
+            icon="edit"
+            color="blue"
+            size="xs"
+            @click="data.todoEdinting = todo"
+          ></q-btn>
         </div>
         <div v-else class="flex items-center justify-between">
           <q-input outlined v-model="todo.description"></q-input>
@@ -67,10 +99,19 @@
             <q-input outlined v-model="todo.dueDate" mask="date">
               <template v-slot:append>
                 <q-icon name="event" class="cursor-pointer">
-                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                  <q-popup-proxy
+                    cover
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
                     <q-date v-model="todo.dueDate">
                       <div class="row items-center justify-end">
-                        <q-btn v-close-popup label="Close" color="primary" flat />
+                        <q-btn
+                          v-close-popup
+                          label="Close"
+                          color="primary"
+                          flat
+                        />
                       </div>
                     </q-date>
                   </q-popup-proxy>
@@ -78,10 +119,15 @@
               </template>
             </q-input>
           </div>
-          <q-btn title="remover item" round icon="save" color="blue" size="xs"
-            @click="data.todoList.updateTodo(todo)"></q-btn>
+          <q-btn
+            title="remover item"
+            round
+            icon="save"
+            color="blue"
+            size="xs"
+            @click="data.todoList.updateTodo(todo)"
+          ></q-btn>
         </div>
-
       </li>
     </ul>
   </q-page>
@@ -93,6 +139,9 @@ import TodoGateway from '../gateways/TodoGateway';
 import TodoList from '../entities/TodoList';
 import Observer from '../entities/Observer';
 import { Todo } from '../entities/Todo';
+import { useQuasar } from 'quasar';
+
+const $q = useQuasar();
 
 type Data = {
   todoList: TodoList;
@@ -106,20 +155,34 @@ const data: Data = reactive({
   todoList: new TodoList(todoGateway),
   description: '',
   dueDate: '',
-  todoEdinting: null
+  todoEdinting: null,
 });
 
 onMounted(async () => {
-  await data.todoList.getTodos()
-  data.todoList.register(new Observer('addTodo', async function () {
-    data.description = '';
-    data.dueDate = '';
-  }));
-  data.todoList.register(new Observer('updateTodo', async function () {
-    data.description = '';
-    data.dueDate = '';
-    data.todoEdinting = null;
-  }));
+  try {
+    await data.todoList.getTodos();
+  } catch (error) {
+    if (error instanceof Error) {
+      $q.dialog({
+        title: 'Erro no retorno da API',
+        message: error.message,
+        color: 'red',
+      });
+      return;
+    }
+  }
+  data.todoList.register(
+    new Observer('addTodo', async function () {
+      data.description = '';
+      data.dueDate = '';
+    })
+  );
+  data.todoList.register(
+    new Observer('updateTodo', async function () {
+      data.description = '';
+      data.dueDate = '';
+      data.todoEdinting = null;
+    })
+  );
 });
-
 </script>
